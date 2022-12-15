@@ -197,6 +197,41 @@ public class SlowCountingFactorizer implements Servlet {
 
 Although this is thread-safe, it is unbearable low-performant as only one request can be executed at a time. This is an example of how concurrency mechanism can bring performance problems.
 
+## Reentrancy
+**Intrinsic locks are reentrant**
+
+A thread cannot acquire a lock owned by another thread. But a thread can acquire a lock that it already owns.  
+
+This describes a situation where synchronized code, directly or indirectly, invokes a method that also contains synchronized code, and both sets of code use the same lock.
+
+Reentrancy is implemented by associating with each lock an acquisition count and an owning thread. When the count is zero, the lock is considered unheld. When a thread acquires a previously unheld lock, the JVM records the owner and sets the acquisition count to one. If that same thread acquires the lock again, the count is incremented, and when the owning thread exits the synchronized block, the count is decremented. When the count reaches zero, the lock is released.
+
+```java
+class Widget {
+    public synchronized void doSomething() {
+        System.out.println(toString() + ": parent class");
+    }
+}
+class LoggingWidget extends Widget {
+    public synchronized void doSomething() {
+        System.out.println(toString() + ": calling doSomething");
+        super.doSomething();
+    }
+}
+
+
+public class Main {
+    public static void main(String[] args) {
+        Widget w = new LoggingWidget();
+
+        Thread t = new Thread(() -> w.doSomething());
+        t.start();
+    }
+}
+```
+
+In above example because the `doSomething` methods in `Widget` and `LoggingWidget` are both synchronized, each tries to acquire the lock on the `Widget` before proceeding. But if intrinsic locks were not reentrant, the call to `super.doSomething` would never be able to acquire the lock because it would be considered already held, and the thread would permanently stall waiting for a lock it can never acquire. Reentrancy saves us from deadlock in situations like this
+
 ## Guarding state with locks
 Compound actions need to be guarded by a lock & the variables involved need to be guarded by the same lock wherever they are accessed.
 
