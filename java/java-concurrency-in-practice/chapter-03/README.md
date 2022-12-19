@@ -117,6 +117,10 @@ A typical use-case for volatile variables are simple status flags.
 
 To use a volatile variable, all these conditions need to be met:
  * Writes to a volatile variable do not depend on its previous state (e.g. `cnt++`)
+  
+  
+Multiple threads could even be writing to a shared volatile variable, and still have the correct value stored in main memory, if the new value written to the       variable does not depend on its previous value. In case only one thread reads and writes the value of a volatile variable and other threads only read the variable,    then the volatile is enough
+
  * The variable does not participate in compound actions with other state variables
  * Locking is not required for any other reason while the variable is being accessed
 
