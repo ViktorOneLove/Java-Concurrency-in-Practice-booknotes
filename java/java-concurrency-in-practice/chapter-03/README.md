@@ -222,6 +222,27 @@ An object, which is encapsulated in a local variable can be used, even if it isn
 Local variables are thread-safe as they are confined to the executing thread's stack, rather than the heap memory, which is shared among threads.  
 Local primitive variables are thread-safe as they can't be shared as per the language specifications. They are always confined to the executing thread's stack.  
 
+```java
+public int loadTheArk(Collection<Animal> candidates) {
+    SortedSet<Animal> animals;
+    int numPairs = 0;
+    Animal candidate = null;
+    // animals confined to method, don’t let them escape!
+    animals = new TreeSet<Animal>(new SpeciesGenderComparator());
+    animals.addAll(candidates);
+    for (Animal a : animals) {
+        if (candidate == null || !candidate.isPotentialMate(a))
+            candidate = a;
+        else {
+            ark.load(new AnimalPair(candidate, a));
+            ++numPairs;
+            candidate = null;
+        }
+    }
+    return numPairs;
+}
+```
+
 ## ThreadLocal
 ThreadLocal allows you to create global variables, which have separate instances per thread.  
 For example, if you have a global JDBC connection in your single-threaded application & you want to migrate to a multi-threaded application, it makes sense to leverage `ThreadLocal` as it will associate a different connection to the different threads in use of your app.  
