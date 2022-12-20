@@ -348,6 +348,8 @@ public class VolatileCachedFactorizer implements Servlet {
 }
 ```
 
+Combination of an immutable holder object for multiple state variables related by an invariant, and a volatile reference used to ensure its timely visibility, allows `VolatileCachedFactorizer` to be thread-safe even though it does no explicit locking
+
 # Safe publication
 This section covers how to publish objects safely.  
 An improperly published object might appear to be in an inconsistent state to another thread.  
