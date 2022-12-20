@@ -381,15 +381,14 @@ In the example above, `n` might appear to be `null` to a caller thread, although
 What's more it could appear to be null the first time it's read and not null the second time, which might lead to the bizarre assertion.  
 
 ## Immutable objects and initialization safety
-As we've seen, synchronization is needed when constructing mutable objects.  
-However, the Java memory model has special guarantees for immutable objects.  
+The Java memory model has special guarantees for immutable objects.  
 
 If an object meets all of the requirements for immutability, then it can be safely published without additional synchronization.  
 
 In the above example, if `Holder` was immutable, it could not throw the assertion error, even if it wasn't properly published.  
 
 This guarantee also extends to final fields of mutable objects. If a field is declared `final`, it is safely published without additional synchronization.  
-Additional synchronization might be required, however, if the value's state is modified at a later stage.  
+However, if final fields refer to mutable objects, synchronization is still required to access the state of the objects they refer to 
 
 ## Safe publication idioms
 
