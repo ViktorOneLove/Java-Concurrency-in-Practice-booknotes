@@ -394,6 +394,9 @@ However, if final fields refer to mutable objects, synchronization is still requ
 
 An object is properly published if:
  * It is initialized from a static field
+
+Static initializers are executed by the JVM at class initialization time; because of internal synchronization in the JVM, this mechanism is guaranteed to safely publish any objects initialized in this way
+
  * A reference is stored to it into a volatile variable or an `AtomicReference`
  * A reference is stored in a `final` field of a properly constructed object
  * A reference is stored in a field, properly guarded by a lock
